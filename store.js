@@ -4,6 +4,7 @@ let store = {};
 store[constants.gamesDirectory] = "./games";
 store[constants.currentRoomId] = 1;
 store[constants.inventory] = [];
+store[constants.gameFile] = null;
 
 
 

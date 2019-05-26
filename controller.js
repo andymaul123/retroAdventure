@@ -1,11 +1,15 @@
 const store = require('./store.js'),
       constants = require('./constants.js');
 
-function look(target) {
-  if(target) {
-
-  } else {
+function look(input) {
+  if(input.length === 1) {
     console.log(fetchRoom(store.read(constants.currentRoomId)).desc);
+  } else {
+    if(input[1] === "at") {
+      // print desc of input[2]
+    } else {
+      console.log("Look at what, now?");
+    }
   }
 }
 function fetchRoom(roomId) {
@@ -22,9 +26,10 @@ module.exports = {
     look();
   },
   parseCommand: function(input) {
-    switch(input) {
+    input = input.split(' ');
+    switch(input[0]) {
       case "look":
-        look();
+        look(input);
         break;
       case "use":
         return "command success"
