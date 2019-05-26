@@ -1,6 +1,21 @@
 module.exports = {
 	title: "Adventure",
-  rooms: [],
+  rooms: [
+    {
+      id: 1,
+      name: "Starting Room",
+      desc: "It's a room!",
+      exits: ["North"],
+      items: [
+        {
+          id: 1,
+          name: "Sword",
+          desc: "A trusty weapon.",
+          type: "Weapon"
+        }
+      ]
+    }
+  ],
   img: `
    xx    ~~~       ~~~
      xxxxx 1         1
@@ -16,5 +31,5 @@ module.exports = {
     ! # ! ### !###! 1111111100
 """""""""""""""""""""""00000100"""""
       `,
-  desc: ""
+  desc: "An example game."
 };

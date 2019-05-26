@@ -2,11 +2,13 @@ const repl = require('repl'),
       fs = require('fs'),
       inquirer = require('inquirer'),
       readline = require('readline'),
-      gamesDirectory = './games';
+      store = require('./store.js'),
+      constants = require('./constants.js'),
+      controller = require('./controller.js');
 
 
 function init() {
-  fs.readdir(gamesDirectory, function(err,files){
+  fs.readdir(store.read(constants.gamesDirectory), function(err,files){
     inquirer.prompt([{
       type: 'list',
       name: 'games',
@@ -14,7 +16,7 @@ function init() {
       choices: files
     }])
     .then(function(answers){
-      const gameFile = require(gamesDirectory+"/"+answers.games);
+      store.write(constants.gameFile,require(store.read(constants.gamesDirectory)+"/"+answers.games));
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
@@ -22,9 +24,9 @@ function init() {
       rl.setPrompt(answers.games.replace(".js","") + " > ");
       rl.prompt();
       rl.on('line', (input) => {
-        console.log(`Received: ${input}`);
+        controller.parseCommand(input);
+        rl.prompt();
       });
-      console.log(gameFile.img);
     })
   })
 }
