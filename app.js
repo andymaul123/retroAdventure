@@ -1,13 +1,12 @@
 const repl = require('repl'),
-      fse = require('fse'),
+      fs = require('fs'),
       inquirer = require('inquirer'),
       readline = require('readline'),
       gamesDirectory = './games';
 
 
 function init() {
-  fse.readdir(gamesDirectory)
-  .then(function(files) {
+  fs.readdir(gamesDirectory, function(err,files){
     inquirer.prompt([{
       type: 'list',
       name: 'games',
@@ -16,23 +15,18 @@ function init() {
     }])
     .then(function(answers){
       const gameFile = require(gamesDirectory+"/"+answers.games);
-      console.log(gameFile);
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
       });
-      rl.setPrompt(answers.games.replace(".json","") + " > ");
+      rl.setPrompt(answers.games.replace(".js","") + " > ");
       rl.prompt();
       rl.on('line', (input) => {
         console.log(`Received: ${input}`);
       });
+      console.log(gameFile.img);
     })
-  }) 
-
-}
-
-function startRepl(game) {
-
+  })
 }
 
 
