@@ -22,11 +22,12 @@ function init() {
         output: process.stdout
       });
       rl.setPrompt(answers.games.replace(".js","") + " > ");
-      rl.prompt();
       rl.on('line', (input) => {
         controller.parseCommand(input);
         rl.prompt();
       });
+      controller.renderRoom();
+      rl.prompt();
     })
   })
 }
