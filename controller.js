@@ -1,6 +1,6 @@
 const store = require('./store.js'),
       constants = require('./constants.js');
-let lastMove, roomDesc;
+let temp;
 
 // Displays either current room description or description of target 
 function look(input) {
@@ -8,12 +8,43 @@ function look(input) {
     console.log(fetchRoom(store.read(constants.currentRoomId)).desc);
   } else {
     if(input[1].toUpperCase() === "AT" && input[2]) {
-      console.log(fetchItem(input[2]).desc);
+      if(fetchItem(input[2])){
+        console.log(fetchItem(input[2]).desc);
+      } else {
+        console.log("Look at what, now?");
+      }
     } else {
       console.log("Look at what, now?");
     }
   }
 }
+
+// Handles moving to and from rooms
+function move(input) {
+  if(input[1]) {
+    if(constants.cardinalDirections.includes(input[1].toUpperCase())) {
+      temp = fetchRoom(store.read(constants.currentRoomId)).exits.find(function(obj){
+        return obj.direction.toUpperCase() === input[1].toUpperCase();
+      });
+      if(temp) {
+        store.write(constants.currentRoomId,temp.toRoomId);
+        module.exports.renderRoom();
+      } else {
+        console.log("You can't go that way.");
+      }
+    } else {
+      console.log("Choose a cardinal direction to move.");
+    }
+  } else {
+    console.log("Move where?");
+  }
+}
+
+// Displays help message
+function help() {
+  console.log(constants.helpMessage);
+}
+
 // Helper to expose room data by id
 function fetchRoom(roomId) {
   return store.read(constants.gameFile).rooms.find(function(obj){
@@ -25,27 +56,6 @@ function fetchItem(itemName) {
   return fetchRoom(store.read(constants.currentRoomId)).items.find(function(obj){
     return obj.name.toUpperCase() === itemName.toUpperCase();
   })
-}
-
-// Handles moving to and from rooms
-function move(input) {
-  if(input[1]) {
-    if(constants.cardinalDirections.includes(input[1].toUpperCase())) {
-      lastMove = fetchRoom(store.read(constants.currentRoomId)).exits.find(function(obj){
-        return obj.direction.toUpperCase() === input[1].toUpperCase();
-      });
-      if(lastMove) {
-        store.write(constants.currentRoomId,lastMove.toRoomId);
-        module.exports.renderRoom();
-      } else {
-        console.log("You can't go that way.");
-      }
-    } else {
-      console.log("Choose a cardinal direction to move.");
-    }
-  } else {
-    console.log("Move where?");
-  }
 }
 
 
@@ -63,17 +73,20 @@ module.exports = {
       case "MOVE":
         move(input);
         break;
+      case "HELP":
+        help();
+        break;
       default:
-        return "bad command"
+        console.log("I don't know that command. Try HELP?");
         break;
     }
   },
   // Aggregates room and item's room descriptions into a single display. Used for first entry into a room.
   renderRoom: function() {
-    roomDesc = fetchRoom(store.read(constants.currentRoomId)).desc;
+    temp = fetchRoom(store.read(constants.currentRoomId)).desc;
     for (var i = 0; i < fetchRoom(store.read(constants.currentRoomId)).items.length; i++) {
-      roomDesc = roomDesc + " " + fetchRoom(store.read(constants.currentRoomId)).items[i].roomDesc;
+      temp = temp + " " + fetchRoom(store.read(constants.currentRoomId)).items[i].roomDesc;
     }
-    console.log(roomDesc);
+    console.log(temp);
   }
 }
