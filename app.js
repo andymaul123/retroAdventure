@@ -26,7 +26,7 @@ function init() {
         controller.parseCommand(input);
         rl.prompt();
       });
-      controller.renderRoom();
+      controller.renderRoom(true);
       rl.prompt();
     })
   })

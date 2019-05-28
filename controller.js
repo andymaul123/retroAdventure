@@ -1,16 +1,25 @@
 const store = require('./store.js'),
       constants = require('./constants.js');
-let temp;
+let tempString = "",
+    tempObj = {},
+    tempArray = [];
 
-// Displays either current room description or description of target 
+/*
+===================================================================================================
+LOOK
+===================================================================================================
+*/
 function look(input) {
   if(input.length === 1) {
-    console.log(fetchRoom(store.read(constants.currentRoomId)).desc);
+    console.log(store.read(constants.rim).desc);
   } else {
     if(input[1].toUpperCase() === "AT" && input[2]) {
       if(fetchItem(input[2])){
         console.log(fetchItem(input[2]).desc);
-      } else {
+      } else if(fetchItem(input[2],true)) {
+        console.log(fetchItem(input[2],true).desc);
+      }
+      else {
         console.log("Look at what, now?");
       }
     } else {
@@ -19,15 +28,16 @@ function look(input) {
   }
 }
 
-// Handles moving to and from rooms
+/*
+===================================================================================================
+MOVE
+===================================================================================================
+*/
 function move(input) {
   if(input[1]) {
     if(constants.cardinalDirections.includes(input[1].toUpperCase())) {
-      temp = fetchRoom(store.read(constants.currentRoomId)).exits.find(function(obj){
-        return obj.direction.toUpperCase() === input[1].toUpperCase();
-      });
-      if(temp) {
-        store.write(constants.currentRoomId,temp.toRoomId);
+      if(fetchExits(input[1])) {
+        store.write(constants.rim,fetchRoom(fetchExits(input[1]).toRoomId))
         module.exports.renderRoom();
       } else {
         console.log("You can't go that way.");
@@ -40,23 +50,85 @@ function move(input) {
   }
 }
 
-// Displays help message
+function fetchExits(direction) {
+ return store.read(constants.rim).exits.find(function(obj){
+    return obj.direction.toUpperCase() === direction.toUpperCase();
+  });
+}
+
+/*
+===================================================================================================
+HELP
+===================================================================================================
+*/
 function help() {
   console.log(constants.helpMessage);
 }
 
-// Helper to expose room data by id
+/*
+===================================================================================================
+INVENTORY
+===================================================================================================
+*/
+function inventory() {
+  tempArray = [];
+  for (var i = 0; i < store.read(constants.inventory).length; i++) {
+    tempArray.push("- " + store.read(constants.inventory)[i].name);
+  }
+  console.log("You have: \n" + tempArray.join(", "));
+}
+
+/*
+===================================================================================================
+TAKE
+===================================================================================================
+*/
+function take(input) {
+  tempObj = fetchItem(input[1]);
+  if(tempObj) {
+    addItemToInventory(tempObj);
+    removeItemFromRoom(tempObj);
+    console.log("You take the " + input[1]);
+  } else {
+    console.log("Take what?");
+  } 
+}
+
+function addItemToInventory(item) {
+  tempArray = store.read(constants.inventory);
+  tempArray.push(item);
+  store.write(constants.inventory,tempArray);
+}
+
+function removeItemFromRoom(item) {
+  tempObj = store.read(constants.rim);
+  tempObj.items = tempObj.items.filter(obj => obj.id != item.id);
+  store.write(constants.rim, tempObj);
+}
+
+/*
+===================================================================================================
+MISC
+===================================================================================================
+*/
 function fetchRoom(roomId) {
   return store.read(constants.gameFile).rooms.find(function(obj){
     return obj.id === roomId;
   })
 }
 // Helper to expose item data by name
-function fetchItem(itemName) {
-  return fetchRoom(store.read(constants.currentRoomId)).items.find(function(obj){
-    return obj.name.toUpperCase() === itemName.toUpperCase();
-  })
+function fetchItem(itemName, checkInventory) {
+  if(checkInventory) {
+    return store.read(constants.inventory).find(function(obj){
+      return obj.name.toUpperCase() === itemName.toUpperCase();
+    }) 
+  } else {
+    return store.read(constants.rim).items.find(function(obj){
+      return obj.name.toUpperCase() === itemName.toUpperCase();
+    })  
+  }
 }
+
 
 
 module.exports = {
@@ -67,14 +139,20 @@ module.exports = {
       case "LOOK":
         look(input);
         break;
-      case "USE":
-        return "command success"
-        break;
+      // case "USE":
+      //   return "command success"
+      //   break;
       case "MOVE":
         move(input);
         break;
+      case "TAKE":
+        take(input);
+        break;
       case "HELP":
         help();
+        break;
+      case "INVENTORY":
+        inventory();
         break;
       default:
         console.log("I don't know that command. Try HELP?");
@@ -82,11 +160,14 @@ module.exports = {
     }
   },
   // Aggregates room and item's room descriptions into a single display. Used for first entry into a room.
-  renderRoom: function() {
-    temp = fetchRoom(store.read(constants.currentRoomId)).desc;
-    for (var i = 0; i < fetchRoom(store.read(constants.currentRoomId)).items.length; i++) {
-      temp = temp + " " + fetchRoom(store.read(constants.currentRoomId)).items[i].roomDesc;
+  renderRoom: function(gameStart) {
+    if(gameStart) {
+      store.write(constants.rim, fetchRoom(1));
     }
-    console.log(temp);
+    tempString = store.read(constants.rim).desc;
+    for (var i = 0; i < store.read(constants.rim).items.length; i++) {
+      tempString = tempString + " " + store.read(constants.rim).items[i].roomDesc;
+    }
+    console.log(tempString);
   }
 }
