@@ -86,9 +86,13 @@ TAKE
 function take(input) {
   tempObj = fetchItem(input[1]);
   if(tempObj) {
-    addItemToInventory(tempObj);
-    removeItemFromRoom(tempObj);
-    console.log("You take the " + input[1]);
+    if(tempObj.canTake) {
+      addItemToInventory(tempObj);
+      removeItemFromRoom(tempObj);
+      console.log("You take the " + input[1]);
+    } else {
+      console.log("You can't take that.");
+    }
   } else {
     console.log("Take what?");
   } 
@@ -104,6 +108,20 @@ function removeItemFromRoom(item) {
   tempObj = store.read(constants.rim);
   tempObj.items = tempObj.items.filter(obj => obj.id != item.id);
   store.write(constants.rim, tempObj);
+}
+
+/*
+===================================================================================================
+USE
+===================================================================================================
+*/
+
+function use(input) {
+  if(fetchItem(input[1])) {
+    fetchItem(input[1]).use();
+  } else if (fetchItem(input[1],true)) {
+    fetchItem(input[1]).use();
+  }
 }
 
 /*
@@ -139,9 +157,9 @@ module.exports = {
       case "LOOK":
         look(input);
         break;
-      // case "USE":
-      //   return "command success"
-      //   break;
+      case "USE":
+        use(input);
+        break;
       case "MOVE":
         move(input);
         break;
@@ -167,6 +185,14 @@ module.exports = {
     tempString = store.read(constants.rim).desc;
     for (var i = 0; i < store.read(constants.rim).items.length; i++) {
       tempString = tempString + " " + store.read(constants.rim).items[i].roomDesc;
+    }
+    if(store.read(constants.rim).exits.length) {
+      tempString = tempString + " There are exits to the: \n";
+      tempArray = [];
+      for (var i = 0; i < store.read(constants.rim).exits.length; i++) {
+        tempArray.push("- " + store.read(constants.rim).exits[i].direction);
+      }
+      tempString = tempString + tempArray.join("\n");
     }
     console.log(tempString);
   }

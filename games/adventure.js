@@ -9,6 +9,10 @@ module.exports = {
         {
           direction: "north",
           toRoomId: 2
+        },
+        {
+          direction: "east",
+          toRoomId: 3
         }
       ],
       items: [
@@ -17,7 +21,22 @@ module.exports = {
           name: "Sword",
           desc: "A trusty weapon.",
           roomDesc: "In the corner is a sword.",
-          type: "Weapon"
+          type: "Weapon",
+          canTake: true,
+          use: function() {
+            console.log("You're just going to swing it around willy-nilly?");
+          }
+        },
+        {
+          id: 2,
+          name: "Lever",
+          desc: "A big, metal lever.",
+          roomDesc: "On the west wall is a big, metal lever with mechanical gears at its base.",
+          type: "fixed",
+          canTake: false,
+          use: function() {
+            console.log("With a mighty heave you move the lever into its downward position!");
+          }
         }
       ]
     },
