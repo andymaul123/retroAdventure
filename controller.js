@@ -1,8 +1,6 @@
 const store = require('./store.js'),
-      constants = require('./constants.js');
-let tempString = "",
-    tempObj = {},
-    tempArray = [];
+      constants = require('./constants.js'),
+      helpers = require('./helpers.js');
 
 /*
 ===================================================================================================
@@ -14,10 +12,10 @@ function look(input) {
     console.log(store.read(constants.rim).desc);
   } else {
     if(input[1].toUpperCase() === "AT" && input[2]) {
-      if(fetchItem(input[2])){
-        console.log(fetchItem(input[2]).desc);
-      } else if(fetchItem(input[2],true)) {
-        console.log(fetchItem(input[2],true).desc);
+      if(helpers.fetchItem(input[2])){
+        console.log(helpers.fetchItem(input[2]).desc);
+      } else if(helpers.fetchItem(input[2],true)) {
+        console.log(helpers.fetchItem(input[2],true).desc);
       }
       else {
         console.log("Look at what, now?");
@@ -36,9 +34,13 @@ MOVE
 function move(input) {
   if(input[1]) {
     if(constants.cardinalDirections.includes(input[1].toUpperCase())) {
-      if(fetchExits(input[1])) {
-        store.write(constants.rim,fetchRoom(fetchExits(input[1]).toRoomId))
-        module.exports.renderRoom();
+      if(helpers.fetchExits(input[1])) {
+        if(helpers.fetchExits(input[1]).locked){
+          console.log("The way "+input[1]+" is locked.");
+        } else {
+          store.write(constants.rim,helpers.fetchRoom(helpers.fetchExits(input[1]).toRoomId))
+          module.exports.renderRoom();
+        }
       } else {
         console.log("You can't go that way.");
       }
@@ -48,12 +50,6 @@ function move(input) {
   } else {
     console.log("Move where?");
   }
-}
-
-function fetchExits(direction) {
- return store.read(constants.rim).exits.find(function(obj){
-    return obj.direction.toUpperCase() === direction.toUpperCase();
-  });
 }
 
 /*
@@ -71,11 +67,11 @@ INVENTORY
 ===================================================================================================
 */
 function inventory() {
-  tempArray = [];
+  let inventory = [];
   for (var i = 0; i < store.read(constants.inventory).length; i++) {
-    tempArray.push("- " + store.read(constants.inventory)[i].name);
+    inventory.push("- " + store.read(constants.inventory)[i].name);
   }
-  console.log("You have: \n" + tempArray.join(", "));
+  console.log("You have: \n" + inventory.join(", "));
 }
 
 /*
@@ -84,11 +80,11 @@ TAKE
 ===================================================================================================
 */
 function take(input) {
-  tempObj = fetchItem(input[1]);
-  if(tempObj) {
-    if(tempObj.canTake) {
-      addItemToInventory(tempObj);
-      removeItemFromRoom(tempObj);
+  let itemTaken = helpers.fetchItem(input[1]);
+  if(itemTaken) {
+    if(itemTaken.canTake) {
+      helpers.addItemToInventory(itemTaken);
+      helpers.removeItemFromRoom(itemTaken);
       console.log("You take the " + input[1]);
     } else {
       console.log("You can't take that.");
@@ -98,18 +94,6 @@ function take(input) {
   } 
 }
 
-function addItemToInventory(item) {
-  tempArray = store.read(constants.inventory);
-  tempArray.push(item);
-  store.write(constants.inventory,tempArray);
-}
-
-function removeItemFromRoom(item) {
-  tempObj = store.read(constants.rim);
-  tempObj.items = tempObj.items.filter(obj => obj.id != item.id);
-  store.write(constants.rim, tempObj);
-}
-
 /*
 ===================================================================================================
 USE
@@ -117,37 +101,12 @@ USE
 */
 
 function use(input) {
-  if(fetchItem(input[1])) {
-    fetchItem(input[1]).use();
-  } else if (fetchItem(input[1],true)) {
-    fetchItem(input[1]).use();
+  if(helpers.fetchItem(input[1])) {
+    helpers.fetchItem(input[1]).use();
+  } else if (helpers.fetchItem(input[1],true)) {
+    helpers.fetchItem(input[1]).use();
   }
 }
-
-/*
-===================================================================================================
-MISC
-===================================================================================================
-*/
-function fetchRoom(roomId) {
-  return store.read(constants.gameFile).rooms.find(function(obj){
-    return obj.id === roomId;
-  })
-}
-// Helper to expose item data by name
-function fetchItem(itemName, checkInventory) {
-  if(checkInventory) {
-    return store.read(constants.inventory).find(function(obj){
-      return obj.name.toUpperCase() === itemName.toUpperCase();
-    }) 
-  } else {
-    return store.read(constants.rim).items.find(function(obj){
-      return obj.name.toUpperCase() === itemName.toUpperCase();
-    })  
-  }
-}
-
-
 
 module.exports = {
   // Accepts user input and shunts it to a function above
@@ -176,24 +135,5 @@ module.exports = {
         console.log("I don't know that command. Try HELP?");
         break;
     }
-  },
-  // Aggregates room and item's room descriptions into a single display. Used for first entry into a room.
-  renderRoom: function(gameStart) {
-    if(gameStart) {
-      store.write(constants.rim, fetchRoom(1));
-    }
-    tempString = store.read(constants.rim).desc;
-    for (var i = 0; i < store.read(constants.rim).items.length; i++) {
-      tempString = tempString + " " + store.read(constants.rim).items[i].roomDesc;
-    }
-    if(store.read(constants.rim).exits.length) {
-      tempString = tempString + " There are exits to the: \n";
-      tempArray = [];
-      for (var i = 0; i < store.read(constants.rim).exits.length; i++) {
-        tempArray.push("- " + store.read(constants.rim).exits[i].direction);
-      }
-      tempString = tempString + tempArray.join("\n");
-    }
-    console.log(tempString);
   }
 }

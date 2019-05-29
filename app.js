@@ -1,10 +1,10 @@
-const repl = require('repl'),
-      fs = require('fs'),
+const fs = require('fs'),
       inquirer = require('inquirer'),
       readline = require('readline'),
       store = require('./store.js'),
       constants = require('./constants.js'),
-      controller = require('./controller.js');
+      controller = require('./controller.js'),
+      helpers = require('./helpers.js');
 
 
 function init() {
@@ -26,7 +26,7 @@ function init() {
         controller.parseCommand(input);
         rl.prompt();
       });
-      controller.renderRoom(true);
+      helpers.renderRoom(true);
       rl.prompt();
     })
   })

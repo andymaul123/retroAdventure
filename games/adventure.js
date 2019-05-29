@@ -8,11 +8,10 @@ module.exports = {
       exits: [
         {
           direction: "north",
-          toRoomId: 2
-        },
-        {
-          direction: "east",
-          toRoomId: 3
+          toRoomId: 2,
+          locked: true,
+          desc: "An iron portcullis bars the way.",
+          roomDesc: "A passge to the north is locked behind the cold iron bars of a portcullis."
         }
       ],
       items: [
