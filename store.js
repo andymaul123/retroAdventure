@@ -21,7 +21,7 @@ module.exports = {
 				obj[path] = value
 				return
 			}
-			return module.exports.writeNew(storeItem, value, obj[path[0]], path.slice(1))
+			return module.exports.write(storeItem, value, obj[path[0]], path.slice(1))
 		}
 	  }
 

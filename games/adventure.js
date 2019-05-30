@@ -33,9 +33,11 @@ module.exports = {
           roomDesc: "On the west wall is a big, metal lever with mechanical gears at its base.",
           type: "fixed",
           canTake: false,
-          use: function() {
-            //return {commandName: "unlockDoor"}
-            console.log("With a mighty heave you move the lever into its downward position!");
+          use: {
+            functionName: "changeDoorState",
+            doorState: false,
+            doorDirection: "north",
+            message: "With a mighty heave you move the lever into its downward position!"
           }
         }
       ]
@@ -44,6 +46,7 @@ module.exports = {
       id: 2,
       name: "End Room",
       desc: "The end of the game.",
+      roomDesc: "The end room long description goes here.",
       exits: [
         {
           direction: "south",

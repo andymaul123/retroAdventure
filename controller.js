@@ -38,7 +38,7 @@ function move(input) {
         if(helpers.fetchExits(input[1]).locked){
           console.log("The way "+input[1]+" is locked.");
         } else {
-          store.write(constants.rim,helpers.fetchRoom(helpers.fetchExits(input[1]).toRoomId))
+          store.write(constants.rim,helpers.fetchRoom(helpers.fetchExits(input[1]).toRoomId));
           helpers.renderRoom();
         }
       } else {
@@ -101,10 +101,12 @@ USE
 */
 
 function use(input) {
-  if(helpers.fetchItem(input[1])) {
-    helpers.fetchItem(input[1]).use();
-  } else if (helpers.fetchItem(input[1],true)) {
-    helpers.fetchItem(input[1]).use();
+  let cmdObj = helpers.fetchItem(input[1]) ? helpers.fetchItem(input[1]) : helpers.fetchItem(input[1], true);
+  if(cmdObj) {
+    helpers[cmdObj.use.functionName](cmdObj.use);
+    console.log(cmdObj.use.message);
+  } else {  
+    console.log("Use what?");
   }
 }
 
@@ -117,8 +119,7 @@ module.exports = {
         look(input);
         break;
       case "USE":
-        //use(input);
-        helpers.changeDoorState("north",false);
+        use(input);
         break;
       case "MOVE":
         move(input);

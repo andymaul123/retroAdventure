@@ -11,12 +11,12 @@ module.exports = {
     fetchItem: function(itemName, checkInventory) {
         if(checkInventory) {
             return store.read(constants.inventory).find(function(obj){
-            return obj.name.toUpperCase() === itemName.toUpperCase();
-            }) 
+                return obj.name.toUpperCase() === itemName.toUpperCase();
+            }); 
         } else {
             return store.read(constants.rim).items.find(function(obj){
-            return obj.name.toUpperCase() === itemName.toUpperCase();
-            })  
+                return obj.name.toUpperCase() === itemName.toUpperCase();
+            });  
         }
     },
     fetchExits: function(direction, returnIndex) {
@@ -50,7 +50,7 @@ module.exports = {
         }
         console.log(roomDescription);
     },
-    changeDoorState: function(doorDirection,doorState) {
-        store.write(constants.rim,doorState,store.read(constants.rim),["exits",module.exports.fetchExits(doorDirection,true),"locked"]);
+    changeDoorState: function(context) {
+        store.write(constants.rim, context.doorState, store.read(constants.rim),["exits",module.exports.fetchExits(context.doorDirection,true), "locked"]);
     }
 }
