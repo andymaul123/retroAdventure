@@ -19,25 +19,27 @@ module.exports = {
             })  
         }
     },
-    fetchExits: function(direction) {
-        return store.read(constants.rim).exits.find(function(obj){
-            return obj.direction.toUpperCase() === direction.toUpperCase();
+    fetchExits: function(direction, returnIndex) {
+        if(returnIndex) {
+            return store.read(constants.rim).exits.findIndex(function(obj){
+                return obj.direction.toUpperCase() === direction.toUpperCase();
             });
+        } else {
+            return store.read(constants.rim).exits.find(function(obj){
+                return obj.direction.toUpperCase() === direction.toUpperCase();
+            });
+        }
     },
     addItemToInventory: function(item) {
-        tempArray = store.read(constants.inventory);
-        tempArray.push(item);
-        store.write(constants.inventory,tempArray);
+        store.write(constants.inventory,store.read(constants.inventory).concat(item));
     },
     removeItemFromRoom: function(item) {
-        tempObj = store.read(constants.rim);
-        tempObj.items = tempObj.items.filter(obj => obj.id != item.id);
-        store.write(constants.rim, tempObj);
+        store.write(constants.rim, store.read(constants.rim).items.filter(obj => obj.id != item.id), store.read(constants.rim),["items"]);
     },
     renderRoom: function(gameStart) {
         let roomDescription = "";
         if(gameStart) {
-          store.write(constants.rim, module.exports.fetchRoom(1));
+          store.write(constants.rim, module.exports.fetchRoom(1), store.read(constants.rim));
         }
         roomDescription = store.read(constants.rim).desc;
         for (var i = 0; i < store.read(constants.rim).items.length; i++) {
@@ -47,5 +49,8 @@ module.exports = {
           roomDescription = roomDescription + " " + store.read(constants.rim).exits[i].roomDesc;
         }
         console.log(roomDescription);
-      }
+    },
+    changeDoorState: function(doorDirection,doorState) {
+        store.write(constants.rim,doorState,store.read(constants.rim),["exits",module.exports.fetchExits(doorDirection,true),"locked"]);
+    }
 }

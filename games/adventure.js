@@ -11,7 +11,7 @@ module.exports = {
           toRoomId: 2,
           locked: true,
           desc: "An iron portcullis bars the way.",
-          roomDesc: "A passge to the north is locked behind the cold iron bars of a portcullis."
+          roomDesc: "A passage to the north is locked behind the cold iron bars of a portcullis."
         }
       ],
       items: [
@@ -34,6 +34,7 @@ module.exports = {
           type: "fixed",
           canTake: false,
           use: function() {
+            //return {commandName: "unlockDoor"}
             console.log("With a mighty heave you move the lever into its downward position!");
           }
         }

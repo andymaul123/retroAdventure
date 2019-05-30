@@ -39,7 +39,7 @@ function move(input) {
           console.log("The way "+input[1]+" is locked.");
         } else {
           store.write(constants.rim,helpers.fetchRoom(helpers.fetchExits(input[1]).toRoomId))
-          module.exports.renderRoom();
+          helpers.renderRoom();
         }
       } else {
         console.log("You can't go that way.");
@@ -117,7 +117,8 @@ module.exports = {
         look(input);
         break;
       case "USE":
-        use(input);
+        //use(input);
+        helpers.changeDoorState("north",false);
         break;
       case "MOVE":
         move(input);

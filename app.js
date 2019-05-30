@@ -26,6 +26,7 @@ function init() {
         controller.parseCommand(input);
         rl.prompt();
       });
+      //console.log(store.read(constants.gameFile).img);
       helpers.renderRoom(true);
       rl.prompt();
     })
