@@ -2,7 +2,9 @@ constants = require('./constants.js');
 
 let store = {};
 store[constants.gamesDirectory] = "./games";
-store[constants.inventory] = [];
+store[constants.inventory] = {
+	items: []
+}
 store[constants.gameFile] = null;
 store[constants.rim] = {};
 
@@ -24,5 +26,4 @@ module.exports = {
 			return module.exports.write(storeItem, value, obj[path[0]], path.slice(1))
 		}
 	  }
-
 }

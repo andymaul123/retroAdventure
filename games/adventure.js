@@ -20,7 +20,6 @@ module.exports = {
           name: "Sword",
           desc: "A trusty weapon.",
           roomDesc: "In the corner is a sword.",
-          type: "Weapon",
           canTake: true,
           use: function() {
             console.log("You're just going to swing it around willy-nilly?");
@@ -31,11 +30,27 @@ module.exports = {
           name: "Lever",
           desc: "A big, metal lever.",
           roomDesc: "On the west wall is a big, metal lever with mechanical gears at its base.",
-          type: "fixed",
           canTake: false,
           use: {
             functionName: "changeDoorState",
             doorState: false,
+            doorDirection: "north",
+            useOnce: true,
+            canUse: true,
+            message: "With a mighty heave you move the lever into its downward position!",
+            canUseMessage: "The lever is stuck in its new position. It can't be moved again."
+          }
+        },
+        {
+          id: 3,
+          name: "Torch",
+          desc: "Oil-soaked and ready to be lit.",
+          roomDesc: "Twin brackets adorn the walls. One empty, save for cobwebs; the other sports an unlit torch.",
+          canTake: true,
+          isOn: false,
+          use: {
+            functionName: "changeItemState",
+            itemState: false,
             doorDirection: "north",
             message: "With a mighty heave you move the lever into its downward position!"
           }

@@ -1,6 +1,7 @@
 const store = require('./store.js'),
       constants = require('./constants.js'),
-      helpers = require('./helpers.js');
+      helpers = require('./helpers.js'),
+      util = require('util');
 
 /*
 ===================================================================================================
@@ -12,12 +13,9 @@ function look(input) {
     console.log(store.read(constants.rim).desc);
   } else {
     if(input[1].toUpperCase() === "AT" && input[2]) {
-      if(helpers.fetchItem(input[2])){
-        console.log(helpers.fetchItem(input[2]).desc);
-      } else if(helpers.fetchItem(input[2],true)) {
-        console.log(helpers.fetchItem(input[2],true).desc);
-      }
-      else {
+      if(helpers.fetchItem(input[2]).item){
+        console.log(helpers.fetchItem(input[2]).item.desc);
+      } else {
         console.log("Look at what, now?");
       }
     } else {
@@ -68,8 +66,8 @@ INVENTORY
 */
 function inventory() {
   let inventory = [];
-  for (var i = 0; i < store.read(constants.inventory).length; i++) {
-    inventory.push("- " + store.read(constants.inventory)[i].name);
+  for (var i = 0; i < store.read(constants.inventory).items.length; i++) {
+    inventory.push("- " + store.read(constants.inventory).items[i].name);
   }
   console.log("You have: \n" + inventory.join(", "));
 }
@@ -81,10 +79,10 @@ TAKE
 */
 function take(input) {
   let itemTaken = helpers.fetchItem(input[1]);
-  if(itemTaken) {
-    if(itemTaken.canTake) {
-      helpers.addItemToInventory(itemTaken);
-      helpers.removeItemFromRoom(itemTaken);
+  if(itemTaken.item && itemTaken.location === constants.rim) {
+    if(itemTaken.item.canTake) {
+      helpers.addItemToInventory(itemTaken.item);
+      helpers.removeItemFromRoom(itemTaken.item);
       console.log("You take the " + input[1]);
     } else {
       console.log("You can't take that.");
@@ -101,17 +99,20 @@ USE
 */
 
 function use(input) {
-  let cmdObj = helpers.fetchItem(input[1]) ? helpers.fetchItem(input[1]) : helpers.fetchItem(input[1], true);
-  if(cmdObj) {
-    helpers[cmdObj.use.functionName](cmdObj.use);
-    console.log(cmdObj.use.message);
+  let useObj =  helpers.fetchItem(input[1]);
+  if(useObj && useObj.item.use.canUse === true) {
+    helpers[useObj.item.use.functionName](useObj.item.use);
+    console.log(useObj.item.use.message);
+    helpers.changePropertyState(helpers.createContext(useObj.location, useObj.item.use.useOnce ? false : true, useObj.location === constants.rim ? store.read(constants.rim) : store.read(constants.inventory), ["items", useObj.index, "use", "canUse"]));
+  } else if (useObj && useObj.item.use.canUse === false) {
+    console.log(useObj.item.use.canUseMessage);
   } else {  
     console.log("Use what?");
   }
 }
 
 module.exports = {
-  // Accepts user input and shunts it to a function above
+
   parseCommand: function(input) {
     input = input.split(' ');
     switch(input[0].toUpperCase()) {
@@ -138,4 +139,5 @@ module.exports = {
         break;
     }
   }
+
 }
