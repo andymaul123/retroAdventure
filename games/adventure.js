@@ -21,9 +21,7 @@ module.exports = {
           desc: "A trusty weapon.",
           roomDesc: "In the corner is a sword.",
           canTake: true,
-          use: function() {
-            console.log("You're just going to swing it around willy-nilly?");
-          }
+          use: null
         },
         {
           id: 2,
@@ -32,9 +30,11 @@ module.exports = {
           roomDesc: "On the west wall is a big, metal lever with mechanical gears at its base.",
           canTake: false,
           use: {
-            functionName: "changeDoorState",
-            doorState: false,
-            doorDirection: "north",
+            functionName: "changePropertyState",
+            name: "north",
+            target: "exit",
+            path: "locked",
+            value: "false",
             useOnce: true,
             canUse: true,
             message: "With a mighty heave you move the lever into its downward position!",
@@ -49,10 +49,15 @@ module.exports = {
           canTake: true,
           isOn: false,
           use: {
-            functionName: "changeItemState",
-            itemState: false,
-            doorDirection: "north",
-            message: "With a mighty heave you move the lever into its downward position!"
+            functionName: "changePropertyState",
+            name: "torch",
+            target: "item", //wrong
+            path: "isOn",
+            value: "true",
+            useOnce: false,
+            canUse: true,
+            message: "You light the torch.",
+            canUseMessage: "It's already lit!"
           }
         }
       ]

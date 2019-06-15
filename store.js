@@ -16,7 +16,12 @@ module.exports = {
 		return store[globalPropertyName]
 	},
 	write: function(storeItem, value, obj, path) {
+		// console.log(storeItem);
+		// console.log(value);
+		// console.log(obj);
+		// console.log(path);
 		if(!obj || !path) {
+			// console.log("failing here");
 			store[storeItem] = value;
 		} else {
 			if (path.length === 1) {

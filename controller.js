@@ -101,14 +101,23 @@ USE
 function use(input) {
   let useObj =  helpers.fetchItem(input[1]);
   if(useObj && useObj.item.use.canUse === true) {
-    helpers[useObj.item.use.functionName](useObj.item.use);
+    helpers.useHandler(useObj.item.use);
     console.log(useObj.item.use.message);
-    helpers.changePropertyState(helpers.createContext(useObj.location, useObj.item.use.useOnce ? false : true, useObj.location === constants.rim ? store.read(constants.rim) : store.read(constants.inventory), ["items", useObj.index, "use", "canUse"]));
+    //helpers.changePropertyState(helpers.createContext(useObj.location, useObj.item.use.useOnce ? false : true, useObj.location === constants.rim ? store.read(constants.rim) : store.read(constants.inventory), ["items", useObj.index, "use", "canUse"]));
   } else if (useObj && useObj.item.use.canUse === false) {
     console.log(useObj.item.use.canUseMessage);
   } else {  
     console.log("Use what?");
   }
+}
+
+/*
+===================================================================================================
+ROOM - Debug command
+===================================================================================================
+*/
+function room() {
+  console.log(store.read(constants.rim));
 }
 
 module.exports = {
@@ -133,6 +142,9 @@ module.exports = {
         break;
       case "INVENTORY":
         inventory();
+        break;
+      case "ROOM":
+        room();
         break;
       default:
         console.log("I don't know that command. Try HELP?");
