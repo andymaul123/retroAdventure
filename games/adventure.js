@@ -1,63 +1,90 @@
+const   store = require('../store.js'),
+        constants = require('../constants.js'),
+        controller = require('../controller.js'),
+        helpers = require('../helpers.js');
 module.exports = {
 	title: "Adventure",
   rooms: [
     {
       id: 1,
       name: "Starting Room",
-      desc: "It's a room!",
+      describe: function(local) {
+        if(local) {
+          return "It's a room...longer description."
+        } else {
+          return "It's a room!"
+        }
+      },
       exits: [
         {
           direction: "north",
           toRoomId: 2,
           locked: true,
-          desc: "An iron portcullis bars the way.",
-          roomDesc: "A passage to the north is locked behind the cold iron bars of a portcullis."
+          describe: function(local) {
+            if(local) {
+              return "An iron portcullis bars the way."
+            } else {
+              return "A passage to the north is locked behind the cold iron bars of a portcullis."
+            }
+          }
         }
       ],
       items: [
         {
           id: 1,
           name: "Sword",
-          desc: "A trusty weapon.",
-          roomDesc: "In the corner is a sword.",
+          describe: function(local) {
+            if(local) {
+              return "A trusty weapon."
+            } else {
+              return "In the corner is a sword."
+            }
+          },
           canTake: true,
           use: null
         },
         {
           id: 2,
           name: "Lever",
-          desc: "A big, metal lever.",
-          roomDesc: "On the west wall is a big, metal lever with mechanical gears at its base.",
+          describe: function(local) {
+            if(local) {
+              return "A big, metal lever."
+            } else {
+              return "On the west wall is a big, metal lever with mechanical gears at its base."
+            }
+          },
           canTake: false,
-          use: {
-            functionName: "changePropertyState",
-            name: "north",
-            target: "exit",
-            path: "locked",
-            value: "false",
-            useOnce: true,
-            canUse: true,
-            message: "With a mighty heave you move the lever into its downward position!",
-            canUseMessage: "The lever is stuck in its new position. It can't be moved again."
+          canUse: true,
+          activate: function() {
+            if(this.canUse) {
+              console.log("With a mighty heave you slam the lever downward. Sounds of mechanical gears rumble distantly, and the portcullis bars slowly retract.");
+              this.canUse = false;
+              helpers.fetchExits("north").exit.locked = false;
+            } else {
+              console.log("The lever is stuck in its downward position.");
+            }
           }
         },
         {
           id: 3,
           name: "Torch",
-          desc: "Oil-soaked and ready to be lit.",
-          roomDesc: "Twin brackets adorn the walls. One empty, save for cobwebs; the other sports an unlit torch.",
+          describe: function(local) {
+            if(local) {
+              return "Oil-soaked and ready to be lit."
+            } else {
+              return "Twin brackets adorn the walls. One empty, save for cobwebs; the other sports an unlit torch."
+            }
+          },
           canTake: true,
+          canUse: true,
           isOn: false,
-          use: {
-            functionName: "changePropertyState",
-            name: "torch",
-            target: "item", //wrong
-            path: "isOn",
-            value: "true",
-            useOnce: false,
-            canUse: true,
-            message: "You light the torch.",
-            canUseMessage: "It's already lit!"
+          activate: function() {
+            if(this.isOn) {
+              console.log("The torch is already lit!");
+            } else {
+              console.log("With a strike of steel and flint the torch sputters and catches. It is now lit.");
+              this.isOn = true;
+            }
           }
         }
       ]
@@ -65,12 +92,24 @@ module.exports = {
     {
       id: 2,
       name: "End Room",
-      desc: "The end of the game.",
-      roomDesc: "The end room long description goes here.",
+      describe: function(local) {
+        if(local) {
+          return "The end of the game."
+        } else {
+          return "The end room long description goes here."
+        }
+      },
       exits: [
         {
           direction: "south",
-          toRoomId: 1
+          toRoomId: 1,
+          describe: function(local) {
+            if(local) {
+              return "The opened portcullis heading south."
+            } else {
+              return "To the south is the opened portcullis."
+            }
+          }
         }
       ],
       items: []

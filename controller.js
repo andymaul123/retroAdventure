@@ -10,11 +10,13 @@ LOOK
 */
 function look(input) {
   if(input.length === 1) {
-    console.log(store.read(constants.rim).desc);
+    console.log(store.read(constants.rim).describe());
   } else {
     if(input[1].toUpperCase() === "AT" && input[2]) {
       if(helpers.fetchItem(input[2]).item){
-        console.log(helpers.fetchItem(input[2]).item.desc);
+        console.log(helpers.fetchItem(input[2]).item.describe(true));
+      } else if (input[2].toUpperCase() === "ROOM") {
+        console.log(store.read(constants.rim).describe(true))
       } else {
         console.log("Look at what, now?");
       }
@@ -32,11 +34,11 @@ MOVE
 function move(input) {
   if(input[1]) {
     if(constants.cardinalDirections.includes(input[1].toUpperCase())) {
-      if(helpers.fetchExits(input[1])) {
-        if(helpers.fetchExits(input[1]).locked){
+      if(helpers.fetchExits(input[1]).exit) {
+        if(helpers.fetchExits(input[1]).exit.locked){
           console.log("The way "+input[1]+" is locked.");
         } else {
-          store.write(constants.rim,helpers.fetchRoom(helpers.fetchExits(input[1]).toRoomId));
+          store.write(constants.rim,helpers.fetchRoom(helpers.fetchExits(input[1]).exit.toRoomId));
           helpers.renderRoom();
         }
       } else {
@@ -99,13 +101,14 @@ USE
 */
 
 function use(input) {
-  let useObj =  helpers.fetchItem(input[1]);
-  if(useObj && useObj.item.use.canUse === true) {
-    helpers.useHandler(useObj.item.use);
-    console.log(useObj.item.use.message);
-    //helpers.changePropertyState(helpers.createContext(useObj.location, useObj.item.use.useOnce ? false : true, useObj.location === constants.rim ? store.read(constants.rim) : store.read(constants.inventory), ["items", useObj.index, "use", "canUse"]));
-  } else if (useObj && useObj.item.use.canUse === false) {
-    console.log(useObj.item.use.canUseMessage);
+  let itemBeingUsed =  helpers.fetchItem(input[1]);
+  if(itemBeingUsed && itemBeingUsed.item.canUse === true) {
+    // if(itemBeingUsed.item.useOnce) {
+    //   itemBeingUsed.item.canUse = false;
+    // }
+    itemBeingUsed.item.activate();
+  } else if (itemBeingUsed && itemBeingUsed.item.canUse === false) {
+    console.log(itemBeingUsed.item.canUseMessage);
   } else {  
     console.log("Use what?");
   }

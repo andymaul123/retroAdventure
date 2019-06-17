@@ -30,16 +30,15 @@ module.exports = {
         }
         return fetchedItem;
     },
-    fetchExits: function(direction, returnIndex) {
-        if(returnIndex) {
-            return store.read(constants.rim).exits.findIndex(function(obj){
-                return obj.direction.toUpperCase() === direction.toUpperCase();
-            });
-        } else {
-            return store.read(constants.rim).exits.find(function(obj){
-                return obj.direction.toUpperCase() === direction.toUpperCase();
-            });
-        }
+    fetchExits: function(direction) {
+        let fetchedExit = {};
+        fetchedExit.exit = store.read(constants.rim).exits.find(function(obj){
+            return obj.direction.toUpperCase() === direction.toUpperCase();
+        });
+        fetchedExit.index = store.read(constants.rim).exits.findIndex(function(obj){
+            return obj.direction.toUpperCase() === direction.toUpperCase();
+        });
+        return fetchedExit;
     },
     addItemToInventory: function(item) {
         store.write(constants.inventory, store.read(constants.inventory).items.concat(item), store.read(constants.inventory), ["items"]);
@@ -52,37 +51,19 @@ module.exports = {
         if(gameStart) {
           store.write(constants.rim, module.exports.fetchRoom(1), store.read(constants.rim));
         }
-        roomDescription = store.read(constants.rim).desc;
+        roomDescription = store.read(constants.rim).describe();
         for (var i = 0; i < store.read(constants.rim).items.length; i++) {
-          roomDescription = roomDescription + " " + store.read(constants.rim).items[i].roomDesc;
+          roomDescription = roomDescription + " " + store.read(constants.rim).items[i].describe();
         }
         for (var i = 0; i < store.read(constants.rim).exits.length; i++) {
-          roomDescription = roomDescription + " " + store.read(constants.rim).exits[i].roomDesc;
+          roomDescription = roomDescription + " " + store.read(constants.rim).exits[i].describe();
         }
         console.log(roomDescription);
     },
     changePropertyState: function(context) {
-        console.log(context);
         store.write(context.location, context.value, context.obj, context.path);
     },
     createContext: function(location, value, obj, path) {
         return {location: location, value: value, obj: obj, path: path}
-    },
-    useHandler(item) {
-        switch(item.target) {
-            case "exit":
-            item.target = constants.rim;
-            item.path = ["exits", module.exports.fetchExits(item.name,true), item.path];
-            break;
-            case "room":
-            item.target = constants.rim;
-            item.path = ["items", module.exports.fetchItem(item.name,true), item.path];
-            break;
-            case "inventory":
-            item.target = constants.inventory;
-            item.path = ["items", module.exports.fetchItem(item.name,true), item.path];
-            break;
-        }
-        module.exports[item.functionName](module.exports.createContext(item.target, item.value, item.target === constants.rim ? store.read(constants.rim) : store.read(constants.inventory), item.path));
     }
 }
