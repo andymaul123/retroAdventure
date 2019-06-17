@@ -30,13 +30,17 @@ module.exports = {
         }
         return fetchedItem;
     },
-    fetchExits: function(direction) {
-        let fetchedExit = {};
+    fetchExits: function(identifier, isAlias) {
+        let fetchedExit = {},
+            keyName = "direction";
+        if(isAlias) {
+            keyName = "name";
+        }
         fetchedExit.exit = store.read(constants.rim).exits.find(function(obj){
-            return obj.direction.toUpperCase() === direction.toUpperCase();
+            return obj[keyName].toUpperCase() === identifier.toUpperCase();
         });
         fetchedExit.index = store.read(constants.rim).exits.findIndex(function(obj){
-            return obj.direction.toUpperCase() === direction.toUpperCase();
+            return obj[keyName].toUpperCase() === identifier.toUpperCase();
         });
         return fetchedExit;
     },

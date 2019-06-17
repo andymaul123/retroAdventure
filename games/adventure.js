@@ -17,6 +17,7 @@ module.exports = {
       },
       exits: [
         {
+          name: "portcullis",
           direction: "north",
           toRoomId: 2,
           locked: true,
@@ -31,7 +32,6 @@ module.exports = {
       ],
       items: [
         {
-          id: 1,
           name: "Sword",
           describe: function(local) {
             if(local) {
@@ -44,7 +44,6 @@ module.exports = {
           use: null
         },
         {
-          id: 2,
           name: "Lever",
           describe: function(local) {
             if(local) {
@@ -57,7 +56,7 @@ module.exports = {
           canUse: true,
           activate: function() {
             if(this.canUse) {
-              console.log("With a mighty heave you slam the lever downward. Sounds of mechanical gears rumble distantly, and the portcullis bars slowly retract.");
+              console.log("With a mighty heave you slam the lever downward. Sounds of mechanical gears rumble, and the portcullis bars slowly retract.");
               this.canUse = false;
               helpers.fetchExits("north").exit.locked = false;
             } else {
@@ -66,11 +65,10 @@ module.exports = {
           }
         },
         {
-          id: 3,
           name: "Torch",
           describe: function(local) {
             if(local) {
-              return "Oil-soaked and ready to be lit."
+              return this.isOn ? "A smoldering torch to light the way." : "Oil-soaked and ready to be lit.";
             } else {
               return "Twin brackets adorn the walls. One empty, save for cobwebs; the other sports an unlit torch."
             }
