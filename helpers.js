@@ -31,11 +31,8 @@ module.exports = {
         return fetchedItem;
     },
     fetchExits: function(identifier, isAlias) {
-        let fetchedExit = {},
-            keyName = "direction";
-        if(isAlias) {
-            keyName = "name";
-        }
+        let fetchedExit = {}, keyName;
+        isAlias ? keyName = "name" : keyName = "direction";
         fetchedExit.exit = store.read(constants.rim).exits.find(function(obj){
             return obj[keyName].toUpperCase() === identifier.toUpperCase();
         });
@@ -50,19 +47,30 @@ module.exports = {
     removeItemFromRoom: function(item) {
         store.write(constants.rim, store.read(constants.rim).items.filter(obj => obj.id != item.id), store.read(constants.rim),["items"]);
     },
+    canSeeRoom: function() {
+        if(store.read(constants.rim).isDark) {
+            return this.fetchItem("torch").item ? this.fetchItem("torch").item.isOn : false;
+        }
+        return true;
+    },
     renderRoom: function(gameStart) {
-        let roomDescription = "";
-        if(gameStart) {
-          store.write(constants.rim, module.exports.fetchRoom(1), store.read(constants.rim));
+        if(this.canSeeRoom()) {
+            let roomDescription = "";
+            if(gameStart) {
+              store.write(constants.rim, this.fetchRoom(1), store.read(constants.rim));
+            }
+            roomDescription = store.read(constants.rim).describe();
+            for (var i = 0; i < store.read(constants.rim).items.length; i++) {
+              roomDescription = roomDescription + " " + store.read(constants.rim).items[i].describe();
+            }
+            for (var i = 0; i < store.read(constants.rim).exits.length; i++) {
+              roomDescription = roomDescription + " " + store.read(constants.rim).exits[i].describe();
+            }
+            console.log(roomDescription);
+            store.read(constants.rim).onRender();
+        } else {
+            console.log(constants.pitchBlack);
         }
-        roomDescription = store.read(constants.rim).describe();
-        for (var i = 0; i < store.read(constants.rim).items.length; i++) {
-          roomDescription = roomDescription + " " + store.read(constants.rim).items[i].describe();
-        }
-        for (var i = 0; i < store.read(constants.rim).exits.length; i++) {
-          roomDescription = roomDescription + " " + store.read(constants.rim).exits[i].describe();
-        }
-        console.log(roomDescription);
     },
     changePropertyState: function(context) {
         store.write(context.location, context.value, context.obj, context.path);

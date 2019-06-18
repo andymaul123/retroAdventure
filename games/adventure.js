@@ -8,12 +8,16 @@ module.exports = {
     {
       id: 1,
       name: "Starting Room",
+      isDark: false,
       describe: function(local) {
         if(local) {
           return "It's a room...longer description."
         } else {
           return "It's a room!"
         }
+      },
+      onRender: function() {
+        return null;
       },
       exits: [
         {
@@ -80,7 +84,7 @@ module.exports = {
             if(this.isOn) {
               console.log("The torch is already lit!");
             } else {
-              console.log("With a strike of steel and flint the torch sputters and catches. It is now lit.");
+              console.log("With a strike of steel and flint the torch catches. It is now lit.");
               this.isOn = true;
             }
           }
@@ -90,12 +94,16 @@ module.exports = {
     {
       id: 2,
       name: "End Room",
+      isDark: true,
       describe: function(local) {
         if(local) {
           return "The end of the game."
         } else {
           return "The end room long description goes here."
         }
+      },
+      onRender: function() {
+        return null;
       },
       exits: [
         {
