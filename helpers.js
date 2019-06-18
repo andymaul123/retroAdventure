@@ -45,7 +45,7 @@ module.exports = {
         store.write(constants.inventory, store.read(constants.inventory).items.concat(item), store.read(constants.inventory), ["items"]);
     },
     removeItemFromRoom: function(item) {
-        store.write(constants.rim, store.read(constants.rim).items.filter(obj => obj.id != item.id), store.read(constants.rim),["items"]);
+        store.write(constants.rim, store.read(constants.rim).items.filter(obj => obj.name.toUpperCase() != item.name.toUpperCase()), store.read(constants.rim), ["items"]);
     },
     canSeeRoom: function() {
         if(store.read(constants.rim).isDark) {
@@ -67,6 +67,7 @@ module.exports = {
               roomDescription = roomDescription + " " + store.read(constants.rim).exits[i].describe();
             }
             console.log(roomDescription);
+            this.advanceTime();
             store.read(constants.rim).onRender();
         } else {
             console.log(constants.pitchBlack);
@@ -77,5 +78,12 @@ module.exports = {
     },
     createContext: function(location, value, obj, path) {
         return {location: location, value: value, obj: obj, path: path}
+    },
+    advanceTime: function(timeAdvance) {
+        if(timeAdvance) {
+            store.write(constants.time, store.read(constants.time) + timeAdvance);
+        } else {
+            store.write(constants.time, store.read(constants.time)+1);
+        }
     }
 }

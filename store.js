@@ -8,6 +8,8 @@ store[constants.inventory] = {
 store[constants.gameFile] = null;
 store[constants.rim] = {};
 
+store[constants.time] = -1;
+
 
 
 module.exports = {

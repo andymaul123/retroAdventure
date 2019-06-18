@@ -107,18 +107,36 @@ module.exports = {
       },
       exits: [
         {
+          name: "portcullis",
           direction: "south",
           toRoomId: 1,
+          locked: false,
           describe: function(local) {
             if(local) {
-              return "The opened portcullis heading south."
+              return "The portcullis back south is open."
             } else {
               return "To the south is the opened portcullis."
             }
           }
         }
       ],
-      items: []
+      items: [
+        {
+          name: "Contraption",
+          describe: function(local) {
+            if(local) {
+              return "It is some kind of timepiece, perhaps?"
+            } else {
+              return "A clockwork contraption rests on a stone pedestal."
+            }
+          },
+          canTake: false,
+          canUse: true,
+          activate: function() {
+            console.log("It indicates a single number: " + store.read(constants.time));
+          }
+        }
+      ]
     }
   ],
   img: `
