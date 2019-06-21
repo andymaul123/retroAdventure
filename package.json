@@ -6,7 +6,9 @@
   "dependencies": {
     "inquirer": "^6.3.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^24.8.0"
+  },
   "scripts": {
     "test": "test"
   },
