@@ -3,10 +3,65 @@ const   store = require('../store.js'),
         controller = require('../controller.js'),
         helpers = require('../helpers.js');
 module.exports = {
-	title: "Adventure",
+  title: "Tower",
+  img: `
+  _____                       
+  /__   \\_____      _____ _ __ 
+    / /\\/ _ \\ \\ /\\ / / _ \\ '__|
+   / / | (_) \\ V  V /  __/ |   
+   \\/   \\___/ \\_/\\_/ \\___|_|   
+      `,
+  desc: "What secrets sleep within?",
   rooms: [
     {
       id: 1,
+      name: "Starting Area",
+      isDark: false,
+      describe: function(local) {
+        if(local) {
+          return "There isn't much else, let alone a room."
+        } else {
+          return "You stand in water up to your knees; endless, black, and nearly placid. It isn't cold or warm, but smells of brine. A severe structure, jutting toward the moon above, is to the north. It is a tower."
+        }
+      },
+      onRender: function() {
+        return null;
+      },
+      exits: [
+        {
+          name: "entrance",
+          direction: "north",
+          toRoomId: 2,
+          locked: false,
+          describe: function(local) {
+            if(local) {
+              return "Not a door, but in fact a window? Either way, it is large enough for you to crawl into."
+            } else {
+              return "A single entrance, illuminated by a beam of moonlight, beckons."
+            }
+          }
+        }
+      ],
+      items: [
+        {
+          name: "Tower",
+          describe: function(local) {
+            if(local) {
+              return "A single spire in the middle of this sea. It seems to be made from old, weathered stone. You can't seem to find but a single entrance in."
+            } else {
+              return ""
+            }
+          },
+          canTake: false,
+          canUse: false,
+          activate: function() {
+            return null;
+          }
+        }
+      ]
+    },
+    {
+      id: 2,
       name: "Starting Room",
       isDark: false,
       describe: function(local) {
@@ -23,7 +78,7 @@ module.exports = {
         {
           name: "portcullis",
           direction: "north",
-          toRoomId: 2,
+          toRoomId: 3,
           locked: true,
           describe: function(local) {
             if(local) {
@@ -92,7 +147,7 @@ module.exports = {
       ]
     },
     {
-      id: 2,
+      id: 3,
       name: "End Room",
       isDark: true,
       describe: function(local) {
@@ -138,21 +193,5 @@ module.exports = {
         }
       ]
     }
-  ],
-  img: `
-   xx    ~~~       ~~~
-     xxxxx 1         1
-        x1!!!!! 0 !!!!!!!
-        x1    !  0000000000
-    !!xx!11#  !xx000000000000
-    ! x x11x000 00!00000!   !
-    !xxx!110  0 x !  0  ! # !
-    !   !1111 0 x !  0  !   !
-    !   0 1 1 0#x#!   00!   !
-    ! #0! #1# 0##x00011111# !
-    ! 00! #11 0000!11111!000!
-    ! # ! ### !###! 1111111100
-"""""""""""""""""""""""00000100"""""
-      `,
-  desc: "An example game."
+  ]
 };

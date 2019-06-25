@@ -1,6 +1,7 @@
 const fs = require('fs'),
       inquirer = require('inquirer'),
       readline = require('readline'),
+      chalk = require('chalk'),
       store = require('./store.js'),
       constants = require('./constants.js'),
       controller = require('./controller.js'),
@@ -26,7 +27,9 @@ function init() {
         controller.parseCommand(input);
         rl.prompt();
       });
-      //console.log(store.read(constants.gameFile).img);
+      console.log(chalk.magenta(store.read(constants.gameFile).img));
+      console.log(chalk.magenta.italic(store.read(constants.gameFile).desc));
+      console.log("");
       helpers.renderRoom(true);
       rl.prompt();
     })

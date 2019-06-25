@@ -18,7 +18,7 @@ function look(input) {
         } else if (input[2].toUpperCase() === "ROOM") {
           console.log(store.read(constants.rim).describe(true))
         } else if (helpers.fetchExits(input[2], true).exit) {
-          console.log(helpers.fetchExits(input[2], true).exit);
+          //console.log(helpers.fetchExits(input[2], true).exit);
           console.log(helpers.fetchExits(input[2], true).exit.describe(true));
         } else {
           console.log("Look at what, now?");

@@ -4,6 +4,7 @@
   "description": "Text adventure engine in Node",
   "main": "app.js",
   "dependencies": {
+    "chalk": "^2.4.2",
     "inquirer": "^6.3.1"
   },
   "devDependencies": {

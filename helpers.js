@@ -1,6 +1,5 @@
 const store = require('./store.js'),
-      constants = require('./constants.js'),
-      util = require('util');
+      constants = require('./constants.js');
 
 module.exports = {
 
