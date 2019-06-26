@@ -11,20 +11,20 @@ module.exports = {
     fetchItem: function(itemName) {
         let fetchedItem = {};
         fetchedItem.item = store.read(constants.rim).items.find(function(obj){
-            return obj.name.toUpperCase() === itemName.toUpperCase();
+            return obj.name.toUpperCase() === itemName.toUpperCase() || obj.aliases.includes(itemName.toUpperCase());
         });
         if(fetchedItem.item) {
             fetchedItem.location = constants.rim;
             fetchedItem.index = store.read(constants.rim).items.findIndex(function(obj){
-                return obj.name.toUpperCase() === itemName.toUpperCase();
+                return obj.name.toUpperCase() === itemName.toUpperCase() || obj.aliases.includes(itemName.toUpperCase());
             });
         } else {
             fetchedItem.item = store.read(constants.inventory).items.find(function(obj){
-                return obj.name.toUpperCase() === itemName.toUpperCase();
+                return obj.name.toUpperCase() === itemName.toUpperCase() || obj.aliases.includes(itemName.toUpperCase());
             }); 
             fetchedItem.location = constants.inventory;
             fetchedItem.index = store.read(constants.rim).items.findIndex(function(obj){
-                return obj.name.toUpperCase() === itemName.toUpperCase();
+                return obj.name.toUpperCase() === itemName.toUpperCase() || obj.aliases.includes(itemName.toUpperCase());
             });
         }
         return fetchedItem;
@@ -60,7 +60,9 @@ module.exports = {
             }
             roomDescription = store.read(constants.rim).describe();
             for (var i = 0; i < store.read(constants.rim).items.length; i++) {
-              roomDescription = roomDescription + " " + store.read(constants.rim).items[i].describe();
+                if(store.read(constants.rim).items[i].describe()) {
+                    roomDescription = roomDescription + " " + store.read(constants.rim).items[i].describe();
+                }
             }
             for (var i = 0; i < store.read(constants.rim).exits.length; i++) {
               roomDescription = roomDescription + " " + store.read(constants.rim).exits[i].describe();

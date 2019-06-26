@@ -47,16 +47,33 @@ module.exports = {
           name: "Tower",
           describe: function(local) {
             if(local) {
-              return "A single spire in the middle of this sea. It seems to be made from old, weathered stone. You can't seem to find but a single entrance in."
+              return "A lonely spire in the middle of this sea. It seems to be made from old, weathered stone. Its only feature seems to be an entrance about six feet up from sea-level."
             } else {
-              return ""
+              return null
             }
           },
           canTake: false,
           canUse: false,
           activate: function() {
             return null;
-          }
+          },
+          aliases: ["SPIRE"]
+        },
+        {
+          name: "water",
+          describe: function(local) {
+            if(local) {
+              return "As far as you can tell it's just normal sea-water. Further out the shallows turn to depths. What secrets lie beneath?"
+            } else {
+              return null
+            }
+          },
+          canTake: false,
+          canUse: false,
+          activate: function() {
+            return null;
+          },
+          aliases: ["SEA"]
         }
       ]
     },

@@ -115,7 +115,7 @@ USE
 function use(input) {
   let itemBeingUsed =  helpers.fetchItem(input[1]);
   if(itemBeingUsed) {
-    itemBeingUsed.item.activate ? itemBeingUsed.item.activate() : console.log("You can't use that.");
+    itemBeingUsed.item.activate && itemBeingUsed.canUse ? itemBeingUsed.item.activate() : console.log("You can't use that.");
   } else {  
     console.log("Use what?");
   }
