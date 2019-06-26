@@ -18,12 +18,7 @@ module.exports = {
 		return store[globalPropertyName]
 	},
 	write: function(storeItem, value, obj, path) {
-		// console.log(storeItem);
-		// console.log(value);
-		// console.log(obj);
-		// console.log(path);
 		if(!obj || !path) {
-			// console.log("failing here");
 			store[storeItem] = value;
 		} else {
 			if (path.length === 1) {
@@ -32,5 +27,11 @@ module.exports = {
 			}
 			return module.exports.write(storeItem, value, obj[path[0]], path.slice(1))
 		}
+	  },
+	  save: function() {
+		  return store;
+	  },
+	  load: function(saveFile) {
+		  store = saveFile;
 	  }
 }

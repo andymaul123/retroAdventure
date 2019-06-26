@@ -3,7 +3,7 @@ const   store = require('../store.js'),
         controller = require('../controller.js'),
         helpers = require('../helpers.js');
 module.exports = {
-  title: "Tower",
+  title: "tower",
   img: `
   _____                       
   /__   \\_____      _____ _ __ 

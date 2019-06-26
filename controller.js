@@ -1,4 +1,5 @@
-const store = require('./store.js'),
+const fs = require('fs'),
+      store = require('./store.js'),
       constants = require('./constants.js'),
       helpers = require('./helpers.js');
 
@@ -123,6 +124,20 @@ function use(input) {
 
 /*
 ===================================================================================================
+SAVE
+===================================================================================================
+*/
+
+function save() {
+  const data = store.save();
+  fs.writeFile('./saves/'+data[constants.gameFile].title+'.js', data, (err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
+  });
+}
+
+/*
+===================================================================================================
 ROOM - Debug command
 ===================================================================================================
 */
@@ -159,6 +174,9 @@ module.exports = {
         break;
       case "ROOM":
         room();
+        break;
+      case "SAVE":
+        save();
         break;
       default:
         console.log("I don't know that command. Try HELP?");
